@@ -1,2 +1,806 @@
-const e={DIGITS:"123456789"},t=e.DIGITS;let n=null,r=null,i=null,l=null;const o={easy:62,medium:53,hard:44,"very-hard":35,insane:26,inhuman:17};function u(t,n){return e.generate(t,n)}function f(t,n){return e.solve(t,n)}function a(t){return e.get_candidates(t)}function _(t){return e.board_string_to_grid(t)}function s(t){return e.print_board(t)}function g(t){return e.validate_board(t)}e.BLANK_CHAR=".",e.BLANK_BOARD=".................................................................................",e.generate=function(t,r){"string"!=typeof t&&void 0!==t||(t=o[t]||o.easy),t=e._force_range(t,82,17);let i="";for(let e=0;e<81;++e)i+=".";const l=e._get_candidates_map(i),u=e._shuffle(n);for(let r in u){let i=u[r],o=e._rand_range(l[i].length),f=l[i][o];if(!e._assign(l,i,f))break;let a=[];for(let e in n){let t=n[e];1==l[t].length&&a.push(l[t])}if(a.length>=t&&e._strip_dups(a).length>=8){let r="",i=[];for(let t in n){let o=n[t];1==l[o].length?(r+=l[o],i.push(t)):r+=e.BLANK_CHAR}let o=i.length;if(o>t){i=e._shuffle(i);for(let n=0;n<o-t;++n){let t=parseInt(i[n]);r=r.substr(0,t)+e.BLANK_CHAR+r.substr(t+1)}}if(e.solve(r))return r}}return e.generate(t)},e.solve=function(t,n){let r=e.validate_board(t);if(!0!==r)throw r;let i=0;for(let n in t)t[n]!==e.BLANK_CHAR&&e._in(t[n],e.DIGITS)&&++i;if(i<17)throw"Too few givens. Minimum givens is 17";n=n||!1;let l=e._get_candidates_map(t),o=e._search(l,n);if(o){let e="";for(let t in o)e+=o[t];return e}return!1},e.get_candidates=function(t){let n=e.validate_board(t);if(!0!==n)throw n;let r=e._get_candidates_map(t);if(!r)return!1;let i=[],l=[],o=0;for(let e in r){let t=r[e];l.push(t),o%9==8&&(i.push(l),l=[]),++o}return i},e._get_candidates_map=function(t){let r=e.validate_board(t);if(!0!==r)throw r;let i={},l=e._get_square_vals_map(t);for(let t in n)i[n[t]]=e.DIGITS;for(let t in l){let n=l[t];if(e._in(n,e.DIGITS)){if(!e._assign(i,t,n))return!1}}return i},e._search=function(t,r){if(!t)return!1;r=r||!1;let i=0;for(let e in n){let r=t[n[e]].length;r>i&&(i=r)}if(1===i)return t;let l=10,o=null;for(let e in n){let r=n[e],i=t[r].length;i<l&&i>1&&(l=i,o=r)}let u=t[o];if(r)for(let n=u.length-1;n>=0;--n){let i=u[n],l=JSON.parse(JSON.stringify(t)),f=e._search(e._assign(l,o,i),r);if(f)return f}else for(let n in u){let r=u[n],i=JSON.parse(JSON.stringify(t)),l=e._search(e._assign(i,o,r));if(l)return l}return!1},e._assign=function(t,n,r){let i=t[n].replace(r,"");for(let r in i){let l=i[r];if(!e._eliminate(t,n,l))return!1}return t},e._eliminate=function(t,n,r){if(!e._in(r,t[n]))return t;t[n]=t[n].replace(r,"");let o=t[n].length;if(1===o){let r=t[n];for(let i in l[n]){let o=l[n][i];if(!e._eliminate(t,o,r))return!1}}if(0===o)return!1;for(let l in i[n]){let o=i[n][l],u=[];for(let n in o){let i=o[n];e._in(r,t[i])&&u.push(i)}if(0===u.length)return!1;if(1===u.length){if(!e._assign(t,u[0],r))return!1}}return t},e._get_square_vals_map=function(e){let t={};if(e.length!=n.length)throw"Board/squares length mismatch.";for(let r in n)t[n[r]]=e[r];return t},e._get_square_units_map=function(e,t){let n={};for(let r in e){let i=e[r],l=[];for(let e in t){let n=t[e];-1!==n.indexOf(i)&&l.push(n)}n[i]=l}return n},e._get_square_peers_map=function(e,t){let n={};for(let r in e){let i=e[r],l=t[i],o=[];for(let e in l){let t=l[e];for(let e in t){let n=t[e];-1===o.indexOf(n)&&n!==i&&o.push(n)}}n[i]=o}return n},e._get_all_units=function(t,n){let r=[];for(let i in t)r.push(e._cross(t[i],n));for(let i in n)r.push(e._cross(t,n[i]));let i=["ABC","DEF","GHI"],l=["123","456","789"];for(let t in i)for(let n in l)r.push(e._cross(i[t],l[n]));return r},e.board_string_to_grid=function(e){let t=[],n=[];for(let r in e)n.push(e[r]),r%9==8&&(t.push(n),n=[]);return t},e.board_grid_to_string=function(e){let t="";for(let n=0;n<9;++n)for(let r=0;r<9;++r)t+=e[n][r];return t},e.print_board=function(t){let n=e.validate_board(t);if(!0!==n)throw n;let r="";for(let e in t){r+=t[e]+" ",e%3==2&&(r+="  "),e%9==8&&(r+="\n"),e%27==26&&(r+="\n")}console.log(r)},e.validate_board=function(t){if(!t)return"Empty board";if(81!==t.length)return"Invalid board size. Board must be exactly 81 squares.";for(let n in t)if(!e._in(t[n],e.DIGITS)&&t[n]!==e.BLANK_CHAR)return"Invalid board character encountered at index "+n+": "+t[n];return!0},e._cross=function(e,t){let n=[];for(let r in e)for(let i in t)n.push(e[r]+t[i]);return n},e._in=function(e,t){return-1!==t.indexOf(e)},e._first_true=function(e){for(let t in e)if(e[t])return e[t];return!1},e._shuffle=function(t){const n=[];for(let e=0;e<t.length;++e)n.push(!1);for(let r in t){let i=e._rand_range(t.length);for(;n[i];)i=i+1>t.length-1?0:i+1;n[i]=t[r]}return n},e._rand_range=function(e,t){if(t=t||0,e)return Math.floor(Math.random()*(e-t))+t;throw"Range undefined"},e._strip_dups=function(e){let t=[],n={};for(let r in e){let i=e[r];n[i]||(t.push(i),n[i]=!0)}return t},e._force_range=function(e,t,n){return(e=e||0)<(n=n||0)?n:e>t?t:e},n=e._cross("ABCDEFGHI",t),r=e._get_all_units("ABCDEFGHI",t),i=e._get_square_units_map(n,r),l=e._get_square_peers_map(n,i);export default e;export{_ as board_string_to_grid,u as generate,a as get_candidates,s as print_board,f as solve,g as validate_board};
+
+(function(l, r) { if (l.getElementById('livereloadscript')) return; r = l.createElement('script'); r.async = 1; r.src = '//' + (window.location.host || 'localhost').split(':')[0] + ':35730/livereload.js?snipver=1'; r.id = 'livereloadscript'; l.getElementsByTagName('head')[0].appendChild(r) })(window.document);
+/*
+    Sudoku.js
+    ---------
+    A Sudoku puzzle generator and solver JavaScript library.
+    Please see the README for more details.
+*/
+
+const sudoku = {}; // Global reference to the sudoku library
+
+sudoku.DIGITS = '123456789'; // Allowed sudoku.DIGITS
+const ROWS = 'ABCDEFGHI'; // Row lables
+const COLS = sudoku.DIGITS; // Column lables
+let SQUARES = null; // Square IDs
+
+let UNITS = null; // All units (row, column, or box)
+let SQUARE_UNITS_MAP = null; // Squares -> units map
+let SQUARE_PEERS_MAP = null; // Squares -> peers map
+
+const MIN_GIVENS = 17; // Minimum number of givens
+const NR_SQUARES = 81; // Number of squares
+
+// Define difficulties by how many squares are given to the player in a new
+// puzzle.
+const DIFFICULTY = {
+  easy: 62,
+  medium: 53,
+  hard: 44,
+  'very-hard': 35,
+  insane: 26,
+  inhuman: 17,
+};
+
+// Blank character and board representation
+sudoku.BLANK_CHAR = '.';
+sudoku.BLANK_BOARD = '....................................................' + '.............................';
+
+// Init
+// -------------------------------------------------------------------------
+function initialize() {
+  /* Initialize the Sudoku library (invoked after library load)
+   */
+  SQUARES = sudoku._cross(ROWS, COLS);
+  UNITS = sudoku._get_all_units(ROWS, COLS);
+  SQUARE_UNITS_MAP = sudoku._get_square_units_map(SQUARES, UNITS);
+  SQUARE_PEERS_MAP = sudoku._get_square_peers_map(SQUARES, SQUARE_UNITS_MAP);
+}
+
+// Generate
+// -------------------------------------------------------------------------
+sudoku.generate = function (difficulty, unique) {
+  /* Generate a new Sudoku puzzle of a particular `difficulty`, e.g.,
+      
+          // Generate an "easy" sudoku puzzle
+          sudoku.generate("easy");
+          
+      
+      Difficulties are as follows, and represent the number of given squares:
+      
+              "easy":         61
+              "medium":       52
+              "hard":         43
+              "very-hard":    34
+              "insane":       25
+              "inhuman":      17
+          
+          
+      You may also enter a custom number of squares to be given, e.g.,
+      
+          // Generate a new Sudoku puzzle with 60 given squares
+          sudoku.generate(60)
+  
+  
+      `difficulty` must be a number between 17 and 81 inclusive. If it's
+      outside of that range, `difficulty` will be set to the closest bound,
+      e.g., 0 -> 17, and 100 -> 81.
+      
+      
+      By default, the puzzles are unique, uless you set `unique` to false. 
+      (Note: Puzzle uniqueness is not yet implemented, so puzzles are *not* 
+      guaranteed to have unique solutions)
+      
+      TODO: Implement puzzle uniqueness
+      */
+
+  // If `difficulty` is a string or undefined, convert it to a number or
+  // default it to "easy" if undefined.
+  if (typeof difficulty === 'string' || typeof difficulty === 'undefined') {
+    difficulty = DIFFICULTY[difficulty] || DIFFICULTY.easy;
+  }
+
+  // Force difficulty between 17 and 81 inclusive
+  difficulty = sudoku._force_range(difficulty, NR_SQUARES + 1, MIN_GIVENS);
+
+  // Get a set of squares and all possible candidates for each square
+  let blank_board = '';
+  for (let i = 0; i < NR_SQUARES; ++i) {
+    blank_board += '.';
+  }
+  const candidates = sudoku._get_candidates_map(blank_board);
+
+  // For each item in a shuffled list of squares
+  const shuffled_squares = sudoku._shuffle(SQUARES);
+  for (let si in shuffled_squares) {
+    let square = shuffled_squares[si];
+
+    // If an assignment of a random chioce causes a contradictoin, give
+    // up and try again
+    let rand_candidate_idx = sudoku._rand_range(candidates[square].length);
+    let rand_candidate = candidates[square][rand_candidate_idx];
+    if (!sudoku._assign(candidates, square, rand_candidate)) {
+      break
+    }
+
+    // Make a list of all single candidates
+    let single_candidates = [];
+    for (let si in SQUARES) {
+      let square = SQUARES[si];
+
+      if (candidates[square].length == 1) {
+        single_candidates.push(candidates[square]);
+      }
+    }
+
+    // If we have at least difficulty, and the unique candidate count is
+    // at least 8, return the puzzle!
+    if (single_candidates.length >= difficulty && sudoku._strip_dups(single_candidates).length >= 8) {
+      let board = '';
+      let givens_idxs = [];
+      for (let i in SQUARES) {
+        let square = SQUARES[i];
+        if (candidates[square].length == 1) {
+          board += candidates[square];
+          givens_idxs.push(i);
+        } else {
+          board += sudoku.BLANK_CHAR;
+        }
+      }
+
+      // If we have more than `difficulty` givens, remove some random
+      // givens until we're down to exactly `difficulty`
+      let nr_givens = givens_idxs.length;
+      if (nr_givens > difficulty) {
+        givens_idxs = sudoku._shuffle(givens_idxs);
+        for (let i = 0; i < nr_givens - difficulty; ++i) {
+          let target = parseInt(givens_idxs[i]);
+          board = board.substr(0, target) + sudoku.BLANK_CHAR + board.substr(target + 1);
+        }
+      }
+
+      // Double check board is solvable
+      // TODO: Make a standalone board checker. Solve is expensive.
+      if (sudoku.solve(board)) {
+        return board
+      }
+    }
+  }
+
+  // Give up and try a new puzzle
+  return sudoku.generate(difficulty)
+};
+
+// Solve
+// -------------------------------------------------------------------------
+sudoku.solve = function (board, reverse) {
+  /* Solve a sudoku puzzle given a sudoku `board`, i.e., an 81-character 
+      string of sudoku.DIGITS, 1-9, and spaces identified by '.', representing the
+      squares. There must be a minimum of 17 givens. If the given board has no
+      solutions, return false.
+      
+      Optionally set `reverse` to solve "backwards", i.e., rotate through the
+      possibilities in reverse. Useful for checking if there is more than one
+      solution.
+      */
+
+  // Assure a valid board
+  let report = sudoku.validate_board(board);
+  if (report !== true) {
+    throw report
+  }
+
+  // Check number of givens is at least MIN_GIVENS
+  let nr_givens = 0;
+  for (let i in board) {
+    if (board[i] !== sudoku.BLANK_CHAR && sudoku._in(board[i], sudoku.DIGITS)) {
+      ++nr_givens;
+    }
+  }
+  if (nr_givens < MIN_GIVENS) {
+    throw 'Too few givens. Minimum givens is ' + MIN_GIVENS
+  }
+
+  // Default reverse to false
+  reverse = reverse || false;
+
+  let candidates = sudoku._get_candidates_map(board);
+  let result = sudoku._search(candidates, reverse);
+
+  if (result) {
+    let solution = '';
+    for (let square in result) {
+      solution += result[square];
+    }
+    return solution
+  }
+  return false
+};
+
+sudoku.get_candidates = function (board) {
+  /* Return all possible candidatees for each square as a grid of 
+      candidates, returnning `false` if a contradiction is encountered.
+      
+      Really just a wrapper for sudoku._get_candidates_map for programmer
+      consumption.
+      */
+
+  // Assure a valid board
+  let report = sudoku.validate_board(board);
+  if (report !== true) {
+    throw report
+  }
+
+  // Get a candidates map
+  let candidates_map = sudoku._get_candidates_map(board);
+
+  // If there's an error, return false
+  if (!candidates_map) {
+    return false
+  }
+
+  // Transform candidates map into grid
+  let rows = [];
+  let cur_row = [];
+  let i = 0;
+  for (let square in candidates_map) {
+    let candidates = candidates_map[square];
+    cur_row.push(candidates);
+    if (i % 9 == 8) {
+      rows.push(cur_row);
+      cur_row = [];
+    }
+    ++i;
+  }
+  return rows
+};
+
+sudoku._get_candidates_map = function (board) {
+  /* Get all possible candidates for each square as a map in the form
+      {square: sudoku.DIGITS} using recursive constraint propagation. Return `false` 
+      if a contradiction is encountered
+      */
+
+  // Assure a valid board
+  let report = sudoku.validate_board(board);
+  if (report !== true) {
+    throw report
+  }
+
+  let candidate_map = {};
+  let squares_values_map = sudoku._get_square_vals_map(board);
+
+  // Start by assigning every digit as a candidate to every square
+  for (let si in SQUARES) {
+    candidate_map[SQUARES[si]] = sudoku.DIGITS;
+  }
+
+  // For each non-blank square, assign its value in the candidate map and
+  // propigate.
+  for (let square in squares_values_map) {
+    let val = squares_values_map[square];
+
+    if (sudoku._in(val, sudoku.DIGITS)) {
+      let new_candidates = sudoku._assign(candidate_map, square, val);
+
+      // Fail if we can't assign val to square
+      if (!new_candidates) {
+        return false
+      }
+    }
+  }
+
+  return candidate_map
+};
+
+sudoku._search = function (candidates, reverse) {
+  /* Given a map of squares -> candiates, using depth-first search, 
+      recursively try all possible values until a solution is found, or false
+      if no solution exists. 
+      */
+
+  // Return if error in previous iteration
+  if (!candidates) {
+    return false
+  }
+
+  // Default reverse to false
+  reverse = reverse || false;
+
+  // If only one candidate for every square, we've a solved puzzle!
+  // Return the candidates map.
+  let max_nr_candidates = 0;
+  for (let si in SQUARES) {
+    let square = SQUARES[si];
+
+    let nr_candidates = candidates[square].length;
+
+    if (nr_candidates > max_nr_candidates) {
+      max_nr_candidates = nr_candidates;
+    }
+  }
+  if (max_nr_candidates === 1) {
+    return candidates
+  }
+
+  // Choose the blank square with the fewest possibilities > 1
+  let min_nr_candidates = 10;
+  let min_candidates_square = null;
+  for (let si in SQUARES) {
+    let square = SQUARES[si];
+
+    let nr_candidates = candidates[square].length;
+
+    if (nr_candidates < min_nr_candidates && nr_candidates > 1) {
+      min_nr_candidates = nr_candidates;
+      min_candidates_square = square;
+    }
+  }
+
+  // Recursively search through each of the candidates of the square
+  // starting with the one with fewest candidates.
+
+  // Rotate through the candidates forwards
+  let min_candidates = candidates[min_candidates_square];
+  if (!reverse) {
+    for (let vi in min_candidates) {
+      let val = min_candidates[vi];
+
+      // TODO: Implement a non-rediculous deep copy function
+      let candidates_copy = JSON.parse(JSON.stringify(candidates));
+      let candidates_next = sudoku._search(sudoku._assign(candidates_copy, min_candidates_square, val));
+
+      if (candidates_next) {
+        return candidates_next
+      }
+    }
+
+    // Rotate through the candidates backwards
+  } else {
+    for (let vi = min_candidates.length - 1; vi >= 0; --vi) {
+      let val = min_candidates[vi];
+
+      // TODO: Implement a non-rediculous deep copy function
+      let candidates_copy = JSON.parse(JSON.stringify(candidates));
+      let candidates_next = sudoku._search(sudoku._assign(candidates_copy, min_candidates_square, val), reverse);
+
+      if (candidates_next) {
+        return candidates_next
+      }
+    }
+  }
+
+  // If we get through all combinations of the square with the fewest
+  // candidates without finding an answer, there isn't one. Return false.
+  return false
+};
+
+sudoku._assign = function (candidates, square, val) {
+  /* Eliminate all values, *except* for `val`, from `candidates` at 
+      `square` (candidates[square]), and propagate. Return the candidates map
+      when finished. If a contradiciton is found, return false.
+      
+      WARNING: This will modify the contents of `candidates` directly.
+      */
+
+  // Grab a list of canidates without 'val'
+  let other_vals = candidates[square].replace(val, '');
+
+  // Loop through all other values and eliminate them from the candidates
+  // at the current square, and propigate. If at any point we get a
+  // contradiction, return false.
+  for (let ovi in other_vals) {
+    let other_val = other_vals[ovi];
+
+    let candidates_next = sudoku._eliminate(candidates, square, other_val);
+
+    if (!candidates_next) {
+      //console.log("Contradiction found by _eliminate.");
+      return false
+    }
+  }
+
+  return candidates
+};
+
+sudoku._eliminate = function (candidates, square, val) {
+  /* Eliminate `val` from `candidates` at `square`, (candidates[square]),
+      and propagate when values or places <= 2. Return updated candidates,
+      unless a contradiction is detected, in which case, return false.
+      
+      WARNING: This will modify the contents of `candidates` directly.
+      */
+
+  // If `val` has already been eliminated from candidates[square], return
+  // with candidates.
+  if (!sudoku._in(val, candidates[square])) {
+    return candidates
+  }
+
+  // Remove `val` from candidates[square]
+  candidates[square] = candidates[square].replace(val, '');
+
+  // If the square has only candidate left, eliminate that value from its
+  // peers
+  let nr_candidates = candidates[square].length;
+  if (nr_candidates === 1) {
+    let target_val = candidates[square];
+
+    for (let pi in SQUARE_PEERS_MAP[square]) {
+      let peer = SQUARE_PEERS_MAP[square][pi];
+
+      let candidates_new = sudoku._eliminate(candidates, peer, target_val);
+
+      if (!candidates_new) {
+        return false
+      }
+    }
+
+    // Otherwise, if the square has no candidates, we have a contradiction.
+    // Return false.
+  }
+  if (nr_candidates === 0) {
+    return false
+  }
+
+  // If a unit is reduced to only one place for a value, then assign it
+  for (let ui in SQUARE_UNITS_MAP[square]) {
+    let unit = SQUARE_UNITS_MAP[square][ui];
+
+    let val_places = [];
+    for (let si in unit) {
+      let unit_square = unit[si];
+      if (sudoku._in(val, candidates[unit_square])) {
+        val_places.push(unit_square);
+      }
+    }
+
+    // If there's no place for this value, we have a contradition!
+    // return false
+    if (val_places.length === 0) {
+      return false
+
+      // Otherwise the value can only be in one place. Assign it there.
+    } else if (val_places.length === 1) {
+      let candidates_new = sudoku._assign(candidates, val_places[0], val);
+
+      if (!candidates_new) {
+        return false
+      }
+    }
+  }
+
+  return candidates
+};
+
+// Square relationships
+// -------------------------------------------------------------------------
+// Squares, and their relationships with values, units, and peers.
+
+sudoku._get_square_vals_map = function (board) {
+  /* Return a map of squares -> values
+   */
+  let squares_vals_map = {};
+
+  // Make sure `board` is a string of length 81
+  if (board.length != SQUARES.length) {
+    throw 'Board/squares length mismatch.'
+  } else {
+    for (let i in SQUARES) {
+      squares_vals_map[SQUARES[i]] = board[i];
+    }
+  }
+
+  return squares_vals_map
+};
+
+sudoku._get_square_units_map = function (squares, units) {
+  /* Return a map of `squares` and their associated units (row, col, box)
+   */
+  let square_unit_map = {};
+
+  // For every square...
+  for (let si in squares) {
+    let cur_square = squares[si];
+
+    // Maintain a list of the current square's units
+    let cur_square_units = [];
+
+    // Look through the units, and see if the current square is in it,
+    // and if so, add it to the list of of the square's units.
+    for (let ui in units) {
+      let cur_unit = units[ui];
+
+      if (cur_unit.indexOf(cur_square) !== -1) {
+        cur_square_units.push(cur_unit);
+      }
+    }
+
+    // Save the current square and its units to the map
+    square_unit_map[cur_square] = cur_square_units;
+  }
+
+  return square_unit_map
+};
+
+sudoku._get_square_peers_map = function (squares, units_map) {
+  /* Return a map of `squares` and their associated peers, i.e., a set of
+      other squares in the square's unit.
+      */
+  let square_peers_map = {};
+
+  // For every square...
+  for (let si in squares) {
+    let cur_square = squares[si];
+    let cur_square_units = units_map[cur_square];
+
+    // Maintain list of the current square's peers
+    let cur_square_peers = [];
+
+    // Look through the current square's units map...
+    for (let sui in cur_square_units) {
+      let cur_unit = cur_square_units[sui];
+
+      for (let ui in cur_unit) {
+        let cur_unit_square = cur_unit[ui];
+
+        if (cur_square_peers.indexOf(cur_unit_square) === -1 && cur_unit_square !== cur_square) {
+          cur_square_peers.push(cur_unit_square);
+        }
+      }
+    }
+
+    // Save the current square an its associated peers to the map
+    square_peers_map[cur_square] = cur_square_peers;
+  }
+
+  return square_peers_map
+};
+
+sudoku._get_all_units = function (rows, cols) {
+  /* Return a list of all units (rows, cols, boxes)
+   */
+  let units = [];
+
+  // Rows
+  for (let ri in rows) {
+    units.push(sudoku._cross(rows[ri], cols));
+  }
+
+  // Columns
+  for (let ci in cols) {
+    units.push(sudoku._cross(rows, cols[ci]));
+  }
+
+  // Boxes
+  let row_squares = ['ABC', 'DEF', 'GHI'];
+  let col_squares = ['123', '456', '789'];
+  for (let rsi in row_squares) {
+    for (let csi in col_squares) {
+      units.push(sudoku._cross(row_squares[rsi], col_squares[csi]));
+    }
+  }
+
+  return units
+};
+
+// Conversions
+// -------------------------------------------------------------------------
+sudoku.board_string_to_grid = function (board_string) {
+  /* Convert a board string to a two-dimensional array
+   */
+  let rows = [];
+  let cur_row = [];
+  for (let i in board_string) {
+    cur_row.push(board_string[i]);
+    if (i % 9 == 8) {
+      rows.push(cur_row);
+      cur_row = [];
+    }
+  }
+  return rows
+};
+
+sudoku.board_grid_to_string = function (board_grid) {
+  /* Convert a board grid to a string
+   */
+  let board_string = '';
+  for (let r = 0; r < 9; ++r) {
+    for (let c = 0; c < 9; ++c) {
+      board_string += board_grid[r][c];
+    }
+  }
+  return board_string
+};
+
+// Utility
+// -------------------------------------------------------------------------
+
+sudoku.print_board = function (board) {
+  /* Print a sudoku `board` to the console.
+   */
+
+  // Assure a valid board
+  let report = sudoku.validate_board(board);
+  if (report !== true) {
+    throw report
+  }
+
+  let V_PADDING = ' '; // Insert after each square
+  let H_PADDING = '\n'; // Insert after each row
+
+  let V_BOX_PADDING = '  '; // Box vertical padding
+  let H_BOX_PADDING = '\n'; // Box horizontal padding
+
+  let display_string = '';
+
+  for (let i in board) {
+    let square = board[i];
+
+    // Add the square and some padding
+    display_string += square + V_PADDING;
+
+    // Vertical edge of a box, insert v. box padding
+    if (i % 3 === 2) {
+      display_string += V_BOX_PADDING;
+    }
+
+    // End of a line, insert horiz. padding
+    if (i % 9 === 8) {
+      display_string += H_PADDING;
+    }
+
+    // Horizontal edge of a box, insert h. box padding
+    if (i % 27 === 26) {
+      display_string += H_BOX_PADDING;
+    }
+  }
+
+  console.log(display_string);
+};
+
+sudoku.validate_board = function (board) {
+  /* Return if the given `board` is valid or not. If it's valid, return
+      true. If it's not, return a string of the reason why it's not.
+      */
+
+  // Check for empty board
+  if (!board) {
+    return 'Empty board'
+  }
+
+  // Invalid board length
+  if (board.length !== NR_SQUARES) {
+    return 'Invalid board size. Board must be exactly ' + NR_SQUARES + ' squares.'
+  }
+
+  // Check for invalid characters
+  for (let i in board) {
+    if (!sudoku._in(board[i], sudoku.DIGITS) && board[i] !== sudoku.BLANK_CHAR) {
+      return 'Invalid board character encountered at index ' + i + ': ' + board[i]
+    }
+  }
+
+  // Otherwise, we're good. Return true.
+  return true
+};
+
+sudoku._cross = function (a, b) {
+  /* Cross product of all elements in `a` and `b`, e.g.,
+      sudoku._cross("abc", "123") ->
+      ["a1", "a2", "a3", "b1", "b2", "b3", "c1", "c2", "c3"]
+      */
+  let result = [];
+  for (let ai in a) {
+    for (let bi in b) {
+      result.push(a[ai] + b[bi]);
+    }
+  }
+  return result
+};
+
+sudoku._in = function (v, seq) {
+  /* Return if a value `v` is in sequence `seq`.
+   */
+  return seq.indexOf(v) !== -1
+};
+
+sudoku._first_true = function (seq) {
+  /* Return the first element in `seq` that is true. If no element is
+      true, return false.
+      */
+  for (let i in seq) {
+    if (seq[i]) {
+      return seq[i]
+    }
+  }
+  return false
+};
+
+sudoku._shuffle = function (seq) {
+  /* Return a shuffled version of `seq`
+   */
+
+  // Create an array of the same size as `seq` filled with false
+  const shuffled = [];
+  for (let i = 0; i < seq.length; ++i) {
+    shuffled.push(false);
+  }
+
+  for (let i in seq) {
+    let ti = sudoku._rand_range(seq.length);
+
+    while (shuffled[ti]) {
+      ti = ti + 1 > seq.length - 1 ? 0 : ti + 1;
+    }
+
+    shuffled[ti] = seq[i];
+  }
+
+  return shuffled
+};
+
+sudoku._rand_range = function (max, min) {
+  /* Get a random integer in the range of `min` to `max` (non inclusive).
+      If `min` not defined, default to 0. If `max` not defined, throw an 
+      error.
+      */
+  min = min || 0;
+  if (max) {
+    return Math.floor(Math.random() * (max - min)) + min
+  } else {
+    throw 'Range undefined'
+  }
+};
+
+sudoku._strip_dups = function (seq) {
+  /* Strip duplicate values from `seq`
+   */
+  let seq_set = [];
+  let dup_map = {};
+  for (let i in seq) {
+    let e = seq[i];
+    if (!dup_map[e]) {
+      seq_set.push(e);
+      dup_map[e] = true;
+    }
+  }
+  return seq_set
+};
+
+sudoku._force_range = function (nr, max, min) {
+  /* Force `nr` to be within the range from `min` to, but not including, 
+      `max`. `min` is optional, and will default to 0. If `nr` is undefined,
+      treat it as zero.
+      */
+  min = min || 0;
+  nr = nr || 0;
+  if (nr < min) {
+    return min
+  }
+  if (nr > max) {
+    return max
+  }
+  return nr
+};
+
+// Initialize library after load
+initialize();
+
+function generate(difficulty, unique) {
+  return sudoku.generate(difficulty, unique)
+}
+
+function solve(board, reverse) {
+  return sudoku.solve(board, reverse)
+}
+
+function get_candidates(board) {
+  return sudoku.get_candidates(board)
+}
+
+function board_string_to_grid(board_string) {
+  return sudoku.board_string_to_grid(board_string)
+}
+
+function print_board(board) {
+  return sudoku.print_board(board)
+}
+
+function validate_board(board) {
+  return sudoku.validate_board(board)
+}
+
+export default sudoku;
+export { board_string_to_grid, generate, get_candidates, print_board, solve, validate_board };
 //# sourceMappingURL=sudoku.esm.js.map

@@ -5,25 +5,14 @@ Sudoku.js
 [![NPM downloads][npm-downloads-image]][npm-downloads-url]
 [![MIT License][license-image]][license-url]
 
-[license-image]: https://img.shields.io/badge/license-MIT-blue.svg?style=flat
-[license-url]: LICENSE
-
-[npm-url]: https://npmjs.org/package/sudoku.utils
-[npm-version-image]: https://img.shields.io/npm/v/sudoku.utils.svg?style=flat
-
-[npm-downloads-image]: https://img.shields.io/npm/dm/sudoku.utils.svg?style=flat
-[npm-downloads-url]: https://npmcharts.com/compare/sudoku.utils?minimal=true
-
 A Sudoku puzzle **generator** and **solver** JavaScript library. Based on zhe code from [robatron/sudoku.js](https://github.com/robatron/sudoku.js).
 
-Check out the [online demo][demo] to see it in action.
 
 Implementation ideas borrowed from
 ["Solving Every Sudoku Puzzle"][norvig-sudoku] by 
 [Peter Norvig][norvig], and a [generator/solver][anderson-sudoku] by 
 [Michael Anderson][anderson].
 
-[demo]:http://htmlpreview.github.io/?https://github.com/tanhaican/sudoku.js/blob/master/demo/index.html
 
 ## Installation
 ```
@@ -37,6 +26,11 @@ import sudoku from 'sudoku.utils'
 const difficulty = "easy";
 const board = sudoku.generate(difficulty);
 console.log(board);
+```
+
+## Demo
+```
+npm run dev
 ```
 
 Intro
@@ -223,6 +217,14 @@ References:
 [norvig]: http://norvig.com
 [anderson]: https://github.com/andermic/
 
+[license-image]: https://img.shields.io/badge/license-MIT-blue.svg?style=flat
+[license-url]: LICENSE
+
+[npm-url]: https://npmjs.org/package/sudoku.utils
+[npm-version-image]: https://img.shields.io/npm/v/sudoku.utils.svg?style=flat
+
+[npm-downloads-image]: https://img.shields.io/npm/dm/sudoku.utils.svg?style=flat
+[npm-downloads-url]: https://npmcharts.com/compare/sudoku.utils?minimal=true
 
 
 License:

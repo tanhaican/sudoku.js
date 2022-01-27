@@ -51,7 +51,7 @@ export default [
     plugins: [
       !isProduction &&
         serve({
-          contentBase: ['build', 'static'],
+          contentBase: ['build', 'demo'],
           open: true,
           port: 3000,
         }),
