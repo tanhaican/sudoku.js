@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <title>Sudoku.js</title>
+  <meta charset="utf-8" />
+  <style>
+    .red {
+      color: red
+    }
+
+    .bold {
+      font-weight: bold;
+    }
+  </style>
+</head>
+
+<body>
+  <h2>Generate a Sudoku puzzle</h2>
+  <pre>
+    sudoku.generate("easy") 
+    <span class="red bold">==></span> 
+    <code class="generate"></code>
+  </pre>
+
+  <h2>Solve a Sudoku puzzle</h2>
+  <pre>
+    sudoku.solve(".17..69..356194.2..89..71.6.65...273872563419.43...685521......798..53..634...59.") 
+    <span class="red bold">==></span> 
+    <code class="solve"></code>
+  </pre>
+
+  <h2>Board string --> grid</h2>
+  <pre>
+    sudoku.board_string_to_grid("23.94.67.8..3259149..76.32.1.....7925.321.4864..68.5317..1....96598721433...9...7") 
+    <span class="red bold">==></span> 
+    <code class="b2g"></code>
+  </pre>
+
+  <h2>Board grid --> string</h2>
+  <pre>
+    sudoku.board_grid_to_string([
+      ["2","3",".","9","4",".","6","7","."],
+      ["8",".",".","3","2","5","9","1","4"],
+      ["9",".",".","7","6",".","3","2","."],
+      ["1",".",".",".",".",".","7","9","2"],
+      ["5",".","3","2","1",".","4","8","6"],
+      ["4",".",".","6","8",".","5","3","1"],
+      ["7",".",".","1",".",".",".",".","9"],
+      ["6","5","9","8","7","2","1","4","3"],
+      ["3",".",".",".","9",".",".",".","7"]
+    ]) 
+    <span class="red bold">==></span> 
+    <code class="g2b"></code>
+  </pre>
+
+  <script type="module">
+    import sudoku from "/sudoku.esm.js";
+    let difficulty = "easy";
+    let board = sudoku.generate(difficulty);
+    document.querySelector(".generate").innerHTML = board;
+
+    let result = sudoku.solve(".17..69..356194.2..89..71.6.65...273872563419.43...685521......798..53..634...59.");
+    document.querySelector(".solve").innerHTML = result;
+
+    let grid = sudoku.board_string_to_grid("23.94.67.8..3259149..76.32.1.....7925.321.4864..68.5317..1....96598721433...9...7");
+    document.querySelector(".b2g").innerHTML = grid;
+
+    let string = sudoku.board_grid_to_string([
+      ["2","3",".","9","4",".","6","7","."],
+      ["8",".",".","3","2","5","9","1","4"],
+      ["9",".",".","7","6",".","3","2","."],
+      ["1",".",".",".",".",".","7","9","2"],
+      ["5",".","3","2","1",".","4","8","6"],
+      ["4",".",".","6","8",".","5","3","1"],
+      ["7",".",".","1",".",".",".",".","9"],
+      ["6","5","9","8","7","2","1","4","3"],
+      ["3",".",".",".","9",".",".",".","7"]
+    ]);
+    document.querySelector(".g2b").innerHTML = string;
+  </script>
+</body>
+
+</html>

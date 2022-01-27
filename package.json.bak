@@ -1,0 +1,15 @@
+{
+  "name": "sudoku.js",
+  "version": "1.0.0",
+  "description": "A Sudoku puzzle generator and solver JavaScript library",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [
+    "sudoku",
+    "javascript"
+  ],
+  "author": "robatron;tanhaican",
+  "license": "ISC"
+}
